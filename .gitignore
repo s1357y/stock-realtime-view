@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# PyInstaller
+build/
+dist/
+
+# 개인 설정 (종목 목록, 창 위치, 투명도)
+settings.json
+
+# Claude Code
+.claude/

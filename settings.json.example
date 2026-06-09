@@ -1,0 +1,7 @@
+{
+  "stocks": ["005930", "000660"],
+  "opacity": 0.75,
+  "update_interval": 10,
+  "window_x": 100,
+  "window_y": 100
+}
