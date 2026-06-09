@@ -1,4 +1,5 @@
 import time
+import threading
 import requests
 from PyQt5.QtCore import QThread, pyqtSignal
 
@@ -92,13 +93,16 @@ class StockWorker(QThread):
 
     def __init__(self, codes: list, interval: int):
         super().__init__()
-        self._codes    = list(codes)
-        self._interval = interval
+        self._lock      = threading.Lock()
+        self._codes     = list(codes)
+        self._interval  = interval
         self._stop_flag = False
 
     def run(self):
         while not self._stop_flag:
-            records = [fetch_stock(code) for code in self._codes]
+            with self._lock:
+                codes = list(self._codes)
+            records = [fetch_stock(code) for code in codes]
             self.data_ready.emit(records)
             for _ in range(self._interval * 2):
                 if self._stop_flag:
@@ -106,7 +110,8 @@ class StockWorker(QThread):
                 time.sleep(0.5)
 
     def update_codes(self, codes: list):
-        self._codes = list(codes)
+        with self._lock:
+            self._codes = list(codes)
 
     def update_interval(self, interval: int):
         self._interval = interval
