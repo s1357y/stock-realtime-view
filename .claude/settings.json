@@ -1,0 +1,58 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$d=[Console]::In.ReadToEnd()|ConvertFrom-Json; if($d.tool_input.command -imatch 'pyinstaller'){$f='C:\\Users\\Notebiz002\\Documents\\stock-realtime-view\\.build_restart_flag'; $p=Get-Process -Name StockViewer -ErrorAction SilentlyContinue; if($p){Stop-Process -Name StockViewer -Force; '1'|Set-Content $f -Encoding UTF8; Write-Host '[빌드 훅] StockViewer.exe 종료됨'}else{Remove-Item $f -ErrorAction SilentlyContinue}}",
+            "shell": "powershell",
+            "timeout": 15,
+            "statusMessage": "빌드 전 StockViewer 상태 확인 중..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$f='C:\\Users\\Notebiz002\\Documents\\stock-realtime-view\\.build_restart_flag'; if(Test-Path $f){Remove-Item $f -Force; Start-Process 'C:\\Users\\Notebiz002\\Documents\\stock-realtime-view\\dist\\StockViewer.exe'; Write-Host '[빌드 훅] StockViewer.exe 재시작됨'}",
+            "shell": "powershell",
+            "timeout": 10,
+            "statusMessage": "빌드 완료, StockViewer 재시작 중..."
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "Remove-Item 'C:\\Users\\Notebiz002\\Documents\\stock-realtime-view\\.build_restart_flag' -ErrorAction SilentlyContinue",
+            "shell": "powershell",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python 'C:\\Users\\Notebiz002\\Documents\\stock-realtime-view\\.claude\\ui_validator.py'",
+            "shell": "powershell",
+            "timeout": 30,
+            "statusMessage": "UI 레이아웃 검증 중..."
+          }
+        ]
+      }
+    ]
+  }
+}
