@@ -136,7 +136,7 @@ class MainWindow(QWidget):
 
         name_w    = fm.horizontalAdvance("종목명주식1") + pad
         price_w   = fm.horizontalAdvance("₩9,999,999") + pad
-        chg_text  = "▲₩1,234,567 99.99% 외" if show_amt else "▲99.99% 외"
+        chg_text  = "▲₩1,234,567 99.99% 장외" if show_amt else "▲99.99% 장외"
         chg_min_w = fm.horizontalAdvance(chg_text) + pad
 
         min_w = name_w + price_w + chg_min_w + 12 + 8   # 12=마진 8=스페이싱

@@ -147,10 +147,16 @@ class TickerWidget(QWidget):
             change_text = f"{arrow}{abs(pct):.2f}%"
 
         if record.get("is_overtime"):
-            change_text += " 외"
-
-        self._change_lbl.setText(change_text)
-        self._change_lbl.setStyleSheet(f"color: {color}; background: transparent;")
+            _overtime_color = "#FFE066"
+            html = (
+                f'<span style="color:{color};">{change_text}</span>'
+                f' <span style="color:{_overtime_color};">장외</span>'
+            )
+            self._change_lbl.setText(html)
+            self._change_lbl.setStyleSheet("background: transparent;")
+        else:
+            self._change_lbl.setText(change_text)
+            self._change_lbl.setStyleSheet(f"color: {color}; background: transparent;")
 
         # 손익
         if self._cfg.get("show_positions") and price > 0:

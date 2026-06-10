@@ -52,6 +52,17 @@
             "statusMessage": "UI 레이아웃 검증 중..."
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$exe='C:\\Users\\Notebiz002\\Documents\\stock-realtime-view\\dist\\StockViewer.exe'; $src='C:\\Users\\Notebiz002\\Documents\\stock-realtime-view'; $latest=(Get-ChildItem ($src+'\\*.py')|Sort-Object LastWriteTime -Desc|Select-Object -First 1).LastWriteTime; $exeT=if(Test-Path $exe){(Get-Item $exe).LastWriteTime}else{[DateTime]::MinValue}; if($latest -gt $exeT){ $p=Get-Process StockViewer -EA SilentlyContinue; if($p){Stop-Process -Name StockViewer -Force}; Set-Location $src; & 'C:\\Users\\Notebiz002\\AppData\\Local\\Python\\bin\\python.exe' -m PyInstaller build.spec --distpath dist --workpath build -y --log-level WARN; if($LASTEXITCODE -eq 0){Start-Process $exe; Write-Host '[빌드 훅] 빌드 완료, StockViewer 재시작'} }",
+            "shell": "powershell",
+            "timeout": 180,
+            "statusMessage": ".py 변경 감지, 재빌드 중..."
+          }
+        ]
       }
     ]
   }

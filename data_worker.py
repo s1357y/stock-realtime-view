@@ -1,6 +1,7 @@
 import time
 import threading
 import requests
+from datetime import datetime, timezone, timedelta, time as dtime
 from PyQt5.QtCore import QThread, pyqtSignal
 
 NAVER_API = "https://m.stock.naver.com/api/stock/{code}/basic"
@@ -46,10 +47,19 @@ def fetch_stock(code: str) -> dict:
 
         name = data.get("stockName", code)
 
-        # 시간외 단일가 확인 (overMarketPriceInfo.overMarketStatus == "OPEN")
+        # 시간외 단일가 확인: API 상태 + KST 시간 범위(장전 07:30~08:30, 장후 15:40~18:00) 모두 충족 시에만 장외
         ovtm = data.get("overMarketPriceInfo") or {}
+        KST = timezone(timedelta(hours=9))
+        now_t = datetime.now(KST)
+        t = now_t.time()
+        weekday = now_t.weekday()
+        _in_overtime_hours = weekday < 5 and (
+            (dtime(7, 30) <= t <= dtime(8, 30)) or
+            (dtime(15, 40) <= t <= dtime(18, 0))
+        )
         is_overtime = (
-            ovtm.get("overMarketStatus") == "OPEN"
+            _in_overtime_hours
+            and ovtm.get("overMarketStatus") == "OPEN"
             and bool((ovtm.get("overPrice") or "").strip())
         )
 
