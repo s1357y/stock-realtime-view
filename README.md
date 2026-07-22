@@ -46,6 +46,9 @@ pip install -r requirements.txt
 python main.py
 ```
 
+터미널에서 실행하면 터미널 종료 시 앱도 함께 종료됩니다.
+터미널 없이 상시 실행하려면 아래 빌드로 만든 실행 파일(`StockViewer.app` / `StockViewer.exe`)을 사용하세요.
+
 ### 빌드
 
 ```bash

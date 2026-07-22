@@ -9,7 +9,7 @@ from PyQt5.QtGui import QPainter, QColor, QFont, QKeySequence, QPixmap, QIcon
 from PyQt5.QtWidgets import QShortcut
 
 from config import load_config, save_config
-from platform_utils import monospace_font_family, set_auto_start
+from platform_utils import IS_MACOS, monospace_font_family, set_auto_start
 from ticker_widget import TickerWidget, calc_row_heights
 from data_worker import StockWorker, fetch_stock
 from settings_dialog import SettingsDialog
@@ -52,6 +52,9 @@ class MainWindow(QWidget):
             Qt.WindowStaysOnTopHint |
             Qt.Tool
         )
+        if IS_MACOS:
+            # macOS에서 Qt.Tool 창은 앱이 비활성화되면 숨겨짐 -> 항상 표시 유지
+            self.setAttribute(Qt.WA_MacAlwaysShowToolWindow)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setWindowOpacity(max(0.15, min(0.95, self._cfg["opacity"])))
         self._restore_position()
