@@ -1,4 +1,3 @@
-import sys
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QMenu, QAction,
     QWidgetAction, QSlider, QInputDialog, QMessageBox,
@@ -10,6 +9,7 @@ from PyQt5.QtGui import QPainter, QColor, QFont, QKeySequence, QPixmap, QIcon
 from PyQt5.QtWidgets import QShortcut
 
 from config import load_config, save_config
+from platform_utils import monospace_font_family, set_auto_start
 from ticker_widget import TickerWidget, calc_row_heights
 from data_worker import StockWorker, fetch_stock
 from settings_dialog import SettingsDialog
@@ -79,14 +79,14 @@ class MainWindow(QWidget):
         self._main_layout.setSpacing(1)
 
         header = QLabel("▣ STOCK")
-        header.setFont(QFont("Consolas", 8))
+        header.setFont(QFont(monospace_font_family(), 8))
         header.setStyleSheet(f"color: {HEADER_COLOR}; background: transparent;")
         header.setAlignment(Qt.AlignCenter)
         header.setFixedHeight(16)
         self._main_layout.addWidget(header)
 
         self._time_lbl = QLabel("--:--:--")
-        self._time_lbl.setFont(QFont("Consolas", 7))
+        self._time_lbl.setFont(QFont(monospace_font_family(), 7))
         self._time_lbl.setStyleSheet("color: #444444; background: transparent;")
         self._time_lbl.setAlignment(Qt.AlignCenter)
         self._time_lbl.setFixedHeight(12)
@@ -131,7 +131,7 @@ class MainWindow(QWidget):
         show_amt  = self._cfg.get("show_change_amount", False)
         show_pos  = self._cfg.get("show_positions", False)
 
-        fm  = QFontMetrics(QFont("Consolas", font_size))
+        fm  = QFontMetrics(QFont(monospace_font_family(), font_size))
         pad = 6
 
         name_w    = fm.horizontalAdvance("종목명주식1") + pad
@@ -296,23 +296,7 @@ class MainWindow(QWidget):
             self._on_data(self._last_records)
 
     def _apply_auto_start(self, enable: bool):
-        if not getattr(sys, "frozen", False):
-            return
-        try:
-            import winreg
-            key_path = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
-            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0,
-                                winreg.KEY_SET_VALUE) as key:
-                if enable:
-                    winreg.SetValueEx(key, "StockViewer", 0, winreg.REG_SZ,
-                                      f'"{sys.executable}"')
-                else:
-                    try:
-                        winreg.DeleteValue(key, "StockViewer")
-                    except FileNotFoundError:
-                        pass
-        except Exception as e:
-            print(f"[autostart] {e}")
+        set_auto_start(enable)
 
     def contextMenuEvent(self, event):
         menu = QMenu(self)
@@ -341,7 +325,8 @@ class MainWindow(QWidget):
             interval_menu.addAction(act)
 
         menu.addSeparator()
-        stealth_act = QAction("스텔스 모드 (Ctrl+L)", self)
+        stealth_key = QKeySequence("Ctrl+L").toString(QKeySequence.NativeText)
+        stealth_act = QAction(f"스텔스 모드 ({stealth_key})", self)
         stealth_act.setCheckable(True)
         stealth_act.setChecked(self._stealth)
         stealth_act.triggered.connect(self._toggle_stealth)

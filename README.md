@@ -1,6 +1,6 @@
 # StockViewer
 
-화면 위에 항상 떠있는 반투명 한국 주식 실시간 모니터링 위젯 (Windows 전용)
+화면 위에 항상 떠있는 반투명 한국 주식 실시간 모니터링 위젯 (Windows / macOS 지원, Linux 기본 호환)
 
 ## 특징
 
@@ -32,9 +32,8 @@
 
 ### 실행 파일 사용 (권장)
 
-```
-dist\StockViewer.exe
-```
+- **Windows**: `dist\StockViewer.exe`
+- **macOS**: `dist/StockViewer.app`
 
 별도 설치 없이 바로 실행됩니다.
 
@@ -53,7 +52,10 @@ python main.py
 python -m PyInstaller build.spec --clean
 ```
 
-빌드 결과물: `dist\StockViewer.exe`
+빌드 결과물 (빌드를 실행한 OS 기준):
+
+- Windows: `dist\StockViewer.exe`
+- macOS: `dist/StockViewer.app`
 
 ## 사용 방법
 
@@ -78,6 +80,8 @@ python -m PyInstaller build.spec --clean
 | `Ctrl` + `R` | 즉시 새로고침 |
 | `Ctrl` + `Q` | 완전 종료 |
 
+macOS에서는 `Ctrl` 대신 `Cmd`를 사용합니다.
+
 ### 트레이 아이콘
 
 - **더블클릭** — 창 보이기 / 숨기기
@@ -85,7 +89,12 @@ python -m PyInstaller build.spec --clean
 
 ## 설정 파일
 
-`settings.json` (실행 파일 기준 같은 폴더)
+`settings.json` 저장 위치:
+
+- 소스 실행: 프로젝트 폴더
+- Windows 빌드: 실행 파일과 같은 폴더
+- macOS 빌드: `~/Library/Application Support/StockViewer/`
+- Linux 빌드: `~/.config/StockViewer/`
 
 ```json
 {
@@ -113,11 +122,13 @@ stock-realtime-view/
 ├── ticker_widget.py  # 종목 1행 위젯
 ├── data_worker.py    # QThread 기반 네이버 API 폴링
 ├── config.py         # settings.json 로드/저장
-├── build.spec        # PyInstaller 빌드 명세
+├── platform_utils.py # OS별 분기 (폰트·자동시작·설정 경로)
+├── build.spec        # PyInstaller 빌드 명세 (Windows exe / macOS app)
 ├── requirements.txt
 ├── settings.json     # 사용자 설정 (자동 저장)
 └── dist/
-    └── StockViewer.exe
+    ├── StockViewer.exe   # Windows 빌드 시
+    └── StockViewer.app   # macOS 빌드 시
 ```
 
 ## 데이터 출처
@@ -127,6 +138,7 @@ API 구조 변경 시 `data_worker.py`의 `fetch_stock()` 함수를 수정해야
 
 ## 주의사항
 
-- Windows 전용 (PyQt5 `Qt.Tool` 플래그 의존)
+- Windows / macOS에서 동작 확인. Linux는 기본 호환 처리만 되어 있으며 별도 테스트되지 않음
+- macOS 빌드는 코드 서명/공증이 없어 첫 실행 시 Gatekeeper 경고가 나올 수 있음 (우클릭 → 열기)
 - 비공식 API 사용이므로 서비스 정책에 따라 동작이 변경될 수 있음
 - 투자 판단의 근거로 사용하지 말 것

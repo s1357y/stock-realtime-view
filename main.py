@@ -5,9 +5,10 @@ from window import MainWindow
 
 
 def main():
+    # HighDpi 속성은 QApplication 생성 전에 설정해야 적용됨
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
     app = QApplication(sys.argv)
-    app.setAttribute(Qt.AA_EnableHighDpiScaling)
-    app.setAttribute(Qt.AA_UseHighDpiPixmaps)
     app.setQuitOnLastWindowClosed(False)
 
     window = MainWindow()

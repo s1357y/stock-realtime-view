@@ -1,6 +1,7 @@
 import json
-import sys
 from pathlib import Path
+
+from platform_utils import config_dir
 
 DEFAULT_CONFIG = {
     "stocks": ["005930", "000660", "035420", "009150", "005380", "006400"],
@@ -26,10 +27,8 @@ DEFAULT_CONFIG = {
 
 
 def get_config_path() -> Path:
-    if getattr(sys, "frozen", False):
-        base = Path(sys.executable).parent
-    else:
-        base = Path(__file__).parent
+    base = config_dir()
+    base.mkdir(parents=True, exist_ok=True)
     return base / "settings.json"
 
 

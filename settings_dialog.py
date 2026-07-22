@@ -9,6 +9,8 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 
+from platform_utils import monospace_font_family
+
 DIALOG_STYLE = """
 QDialog { background: #1e1e1e; color: #e0e0e0; }
 QTabWidget::pane { border: 1px solid #444; background: #1e1e1e; }
@@ -42,7 +44,7 @@ QDialogButtonBox QPushButton { min-width: 70px; }
 
 def _section_label(text: str) -> QLabel:
     lbl = QLabel(text)
-    lbl.setFont(QFont("Consolas", 9, QFont.Bold))
+    lbl.setFont(QFont(monospace_font_family(), 9, QFont.Bold))
     lbl.setStyleSheet("color: #888; background: transparent; margin-top: 8px;")
     return lbl
 
@@ -204,7 +206,7 @@ class SettingsDialog(QDialog):
         lay.setContentsMargins(12, 12, 12, 12)
         lay.setSpacing(10)
 
-        self._chk_alert = QCheckBox("알림 기능 활성화 (Windows 트레이 알림)")
+        self._chk_alert = QCheckBox("알림 기능 활성화 (시스템 트레이 알림)")
         self._chk_alert.setChecked(self._cfg.get("alerts_enabled", False))
         lay.addWidget(self._chk_alert)
 
@@ -236,7 +238,7 @@ class SettingsDialog(QDialog):
 
         lay.addWidget(_section_label("시작 옵션"))
 
-        self._chk_autostart = QCheckBox("Windows 시작 시 자동 실행")
+        self._chk_autostart = QCheckBox("OS 로그인 시 자동 실행")
         self._chk_autostart.setChecked(self._cfg.get("auto_start", False))
         lay.addWidget(self._chk_autostart)
 
@@ -245,7 +247,7 @@ class SettingsDialog(QDialog):
         lay.addWidget(self._chk_hidden)
 
         if not getattr(sys, "frozen", False):
-            note = QLabel("※ 자동 시작은 .exe 빌드 실행 시에만 적용됩니다.")
+            note = QLabel("※ 자동 시작은 패키징 빌드 실행 시에만 적용됩니다.")
             note.setStyleSheet("color: #666; font-size: 9pt;")
             lay.addWidget(note)
 
