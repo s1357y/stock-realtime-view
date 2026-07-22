@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QMenu
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFont
 
+from platform_utils import monospace_font_family
+
 COLOR_UP    = "#FF4444"
 COLOR_DOWN  = "#4499FF"
 COLOR_FLAT  = "#AAAAAA"
@@ -38,7 +40,7 @@ class TickerWidget(QWidget):
 
     def _font(self, size=None, bold=False) -> QFont:
         fs = size if size is not None else self._cfg.get("font_size", 10)
-        f = QFont("Consolas", fs)
+        f = QFont(monospace_font_family(), fs)
         f.setBold(bold)
         return f
 

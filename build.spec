@@ -1,4 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
+import sys
 
 block_cipher = None
 
@@ -17,8 +18,6 @@ a = Analysis(
     hooksconfig={},
     runtime_hooks=[],
     excludes=['matplotlib', 'scipy', 'tkinter', 'unittest'],
-    win_no_prefer_redirects=False,
-    win_private_assemblies=False,
     cipher=block_cipher,
     noarchive=False,
 )
@@ -46,3 +45,16 @@ exe = EXE(
     entitlements_file=None,
     uac_admin=False,
 )
+
+# macOS: .app 번들 생성 (트레이 상주형이라 Dock 아이콘 숨김)
+if sys.platform == 'darwin':
+    app = BUNDLE(
+        exe,
+        name='StockViewer.app',
+        icon=None,
+        bundle_identifier='com.stockviewer.app',
+        info_plist={
+            'LSUIElement': True,
+            'NSHighResolutionCapable': True,
+        },
+    )
